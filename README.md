@@ -12,3 +12,4 @@
 
 * `make.r` is the R script to run individual R Markdown files and create the output Markdown.
 * Since this is a public repository, the example should **not** contain any protected health information (PHI).
+* Add a bullet-point to this README.md file for each tip/trick you add.
