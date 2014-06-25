@@ -1,0 +1,102 @@
+Goal: Find the Fastest Method for Merging
+========================================================
+
+This program compares the relative merging speed of:
+* `rxMerge`
+* `rxMergeXdf`
+* `merge` - using dataframes
+* `merge` - using datatables
+* `join` - using dataframes
+* `join` - using dataframes
+
+
+Preliminaries
+--------------------------------------------------------
+
+**Set file path.**
+```{r}
+path <- file.path("H:", "R files", "Test Data, Test Code")
+```
+
+**Load `plyr` and `data.table` packages.**
+```{r}
+library(plyr)
+library(data.table)
+```
+
+**Set RevoScalR progress reporting to no progress is reported to cut down on non-essential output.**
+```{r}
+rxOptions(reportProgress = 0)
+```
+
+
+**Create test datasets.**   
+The first dataset, `data`, mimicks the recipient file. It is long (500,000 records) and wide (12 variables, including member ID, age, and 10 character variables, *V1* through *V10*).   
+```{r}
+n=500000                                     #Number of observations
+ID = seq(1:n)
+AGE = sample(seq(1:80),n,replace=T)
+for(i in 1:10) {
+  assign(paste("V",i,sep=""),replicate(n,paste(sample(letters,5,replace=T),collapse="")))
+}
+
+data <- data.frame(ID,AGE,V1,V2,V3,V4,V5,V6,V7,V8,V9,V10)
+data <- data[order(data$ID),]
+head(data)
+```
+
+
+The second dataset, `LU`, mimicks a typical "Lookup" file in my processes. It has two variables - member ID (on which to merge) and an indicator variable. Only a subset of the members in `data` appear in `LU`.
+```{r}
+ID2 <- sample(ID,10000,replace=F)
+new <- sample(c(0,1),10000,replace=T)
+
+LU <- data.frame(ID=ID2,new)
+LU <- LU[order(LU$ID),]
+head(LU)
+```
+
+These are saved as `.xdf` files.
+```{r}
+rxDataFrameToXdf(data, file.path(path,"data.xdf"), overwrite=T)
+rxDataFrameToXdf(LU, file.path(path,"LU.xdf"), overwrite=T)
+```
+
+Compare merges
+--------------------------------------------------------
+
+**`rxMerge`**
+```{r}
+system.time(rxMerge(inData1=file.path(path,"data.xdf"), inData2=file.path(path,"LU.xdf"), outFile=file.path(path,"results_rxMerge.xdf"), matchVars="ID", type="left", autoSort=F, maxRowsByCols=NULL, overwrite=T))
+```
+
+**rxMergeXdf**
+```{r}
+system.time(rxMergeXdf(inFile1=file.path(path,"data.xdf"), inFile2=file.path(path,"LU.xdf"), outFile=file.path(path,"results_rxMergeXdf.xdf"), matchVars="ID", type="left", overwrite=T))
+```
+
+**merge - using dataframes**
+```{r}
+system.time(mergedf <- merge(data, LU, by="ID", all.x=T, sort=F))
+```
+
+**merge - using datatables**
+```{r}
+datadt <- data.table(data)
+LUdt <- data.table(LU)
+system.time(mergedt <- merge(datadt, LUdt, by="ID", all.x=T, sort=F))
+```
+
+**join - using dataframes**
+```{r}
+system.time(joindf <- join(data, LU, by="ID", type="left"))
+```
+
+**join - using dataframes**
+```{r}
+system.time(joindt <- join(datadt, LUdt, by="ID", type="left"))
+```
+
+
+Winner: `merge` using datatables
+--------------------------------------------------------
