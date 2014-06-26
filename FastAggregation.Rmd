@@ -1,0 +1,80 @@
+# Fast aggregation
+
+Aggregating large datasets can take a long time.
+This exercise compares a couple of different methods.
+
+
+## Fake dataset
+
+Create a fake dataset of 50 million records.
+
+```{r, tidy=FALSE}
+s <- 5E7
+D <- data.frame(gender = sample(c("M", "F"), s, replace=TRUE),
+                age = sample(c("Infant", "Child", "Adult", "Elderly"), s, replace=TRUE),
+                state = sample(state.name, s, replace=TRUE),
+                y = rnorm(s))
+```
+
+
+## Parameters
+
+Calculate the number of non-missing, mean, and standard deviation of variable `y` for every combination of `gender`, `age`, and `state`.
+
+
+## Using `aggregate`
+
+Use the `aggregate` function on the original data frame.
+
+```{r}
+f <- function (x) {
+  n <- sum(!is.na(x))
+  mean <- mean(x, na.rm=TRUE)
+  sd <- sd(x, na.rm=TRUE)
+  c(n=n, mean=mean, sd=sd)
+}
+timeAgg1 <- system.time(DAgg1 <- aggregate(y ~ age + gender + state, data=D, FUN=f))
+```
+
+
+## Using `data.table`
+
+Convert the data frame to a `data.table` class and perform the aggregation using data table syntax.
+
+```{r, tidy=FALSE}
+require(data.table)
+D <- data.table(D)
+setkey(D, gender, age, state)
+f <- function (x) {
+  n <- sum(!is.na(x))
+  mean <- mean(x, na.rm=TRUE)
+  sd <- sd(x, na.rm=TRUE)
+  list(n=n, mean=mean, sd=sd)
+}
+timeAgg2 <- system.time(DAgg2 <- D[, f(y), key(D)])
+```
+
+
+## Compare
+
+Confirm that the same output is produced.
+
+```{r}
+DAgg1[DAgg1$state == "Oregon", ]
+DAgg2[state == "Oregon"]
+```
+
+Compare the timings.
+
+```{r}
+timeAgg1
+timeAgg2
+```
+
+Calculate the ratio of timings for `aggregate` versus `data.table`.
+
+```{r}
+timeAgg1 / timeAgg2
+```
+
+**`data.table` is much faster.**
