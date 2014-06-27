@@ -10,7 +10,7 @@
 * Fast aggregation. [`FastAggregation.md`](https://github.com/benjamin-chan/RTipsAndTricks/blob/master/FastAggregation.md)
 * Call SAS program **TO DO**
 * Call Stata program **TO DO**
-* *Round up* a date object to the latest quarter **TO DO**
+* *Round up* a date object to the latest quarter [`RoundUpToQuarter.md`](https://github.com/benjamin-chan/RTipsAndTricks/blob/master/RoundUpToQuarter.md)
 
 
 **For contributors**
