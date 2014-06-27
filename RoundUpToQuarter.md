@@ -12,6 +12,7 @@ First, create a fake dataset.
 ```r
 x <- c("2014-01-14", "2012-03-30", "2010-04-02", "2011-06-01", "2011-08-23", 
     "2011-09-01", "2012-12-30", "2011-12-31")
+x <- as.Date(x)
 ```
 
 
@@ -51,7 +52,7 @@ str(D)
 
 ```
 ## 'data.frame':	8 obs. of  2 variables:
-##  $ dateOriginal: Factor w/ 8 levels "2010-04-02","2011-06-01",..: 8 6 1 2 3 4 7 5
+##  $ dateOriginal: Date, format: "2014-01-14" "2012-03-30" ...
 ##  $ dateQuarter : Date, format: "2014-03-31" "2012-03-31" ...
 ```
 

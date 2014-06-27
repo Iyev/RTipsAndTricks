@@ -10,6 +10,7 @@ First, create a fake dataset.
 
 ```{r}
 x <- c("2014-01-14", "2012-03-30", "2010-04-02", "2011-06-01", "2011-08-23", "2011-09-01", "2012-12-30", "2011-12-31")
+x <- as.Date(x)
 ```
 
 Next, create some intermediate, helper variables.
