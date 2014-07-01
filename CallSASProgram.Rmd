@@ -1,0 +1,60 @@
+# Call SAS program
+
+Sometimes it's just useful to do some heavy lifting in SAS.
+For example, using `proc sql` to join multiple tables simultaneously is easier to do in SAS.
+(I know, there are some SQL packages for R)
+
+The basic process for call SAS from R is
+
+1. Write data to be processed by SAS as CSV.
+2. Call an existing SAS program. **TO DO**
+3. Read data file created by the SAS program. **TO DO**
+
+
+## Create a fake dataset
+
+Create a fake dataset for illustration.
+
+```{r, tidy=FALSE}
+s <- 1000
+D <- data.frame(id = seq(1, s),
+	            date = sample(seq(as.Date("2013-01-01"), as.Date("2013-12-31"), 1), s, replace=TRUE),
+	            state = sample(state.name, s, replace=TRUE),
+	            x1 = rnorm(s),
+	            x2 = runif(s),
+	            x3 = rbinom(s, 1, 0.5))
+```
+
+Recode some random values of x1 to `NA`.
+
+```{r}
+sample <- sample(D$id, s * 0.10)
+D$x1[sample] <- NA
+```
+
+Examine the dataset.
+
+```{r}
+summary(D)
+```
+
+
+## Write data to CSV
+
+Some things to note about the call to `write.csv`.
+
+* `quote=FALSE` prevents writing redundant quotation marks
+* `na="."` changes the R default `NA` to the SAS default `.` for missing values
+* `row.names=FALSE` also prevents writing redundant stuff
+
+```{r}
+path <- getwd()
+f <- file.path(path, "fakedata.csv")
+write.csv(D, f, quote=FALSE, na=".", row.names=FALSE)
+```
+
+Read a few lines from the CSV file just to take a peek.
+
+```{r}
+readLines(f, n=5)
+```
