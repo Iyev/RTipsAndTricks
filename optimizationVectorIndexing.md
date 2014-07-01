@@ -165,3 +165,116 @@ system.time(
                              facBetos  = facBetos [idx])]
 )                     
 ```
+
+
+## Another example
+
+```r
+## Lookup table
+lookup <- c("Apple", "Banana", "Cherry", "Durian")
+names(lookup) <- c(1, 2, 3, 4)
+lookup
+```
+
+```
+##       1        2        3        4 
+## "Apple" "Banana" "Cherry" "Durian" 
+```
+
+```r
+## Stupid dataset
+D <- data.frame(fruit1 = c(4, 1, 2, 3, 5, 6, 7, 8, 9),
+                fruit2 = c(1, 1, 9, 9, 9, 9, 9, 9, 2))
+D
+```
+
+```
+##   fruit1 fruit2
+## 1      4      1
+## 2      1      1
+## 3      2      9
+## 4      3      9
+## 5      5      9
+## 6      6      9
+## 7      7      9
+## 8      8      9
+## 9      9      2
+```
+
+```r
+## Slower method
+D$fruitSlow <- lookup[D$fruit1]
+D
+```
+
+```
+##   fruit1 fruit2 fruitSlow
+## 1      4      1    Durian
+## 2      1      1     Apple
+## 3      2      9    Banana
+## 4      3      9    Cherry
+## 5      5      9      <NA>
+## 6      6      9      <NA>
+## 7      7      9      <NA>
+## 8      8      9      <NA>
+## 9      9      2      <NA>
+```
+
+```r
+unlabeled <- is.na(D$fruitSlow)
+D$fruitSlow[unlabeled] <- lookup[D$fruit2[unlabeled]]
+D
+```
+
+```
+##   fruit1 fruit2 fruitSlow
+## 1      4      1    Durian
+## 2      1      1     Apple
+## 3      2      9    Banana
+## 4      3      9    Cherry
+## 5      5      9      <NA>
+## 6      6      9      <NA>
+## 7      7      9      <NA>
+## 8      8      9      <NA>
+## 9      9      2    Banana
+```
+
+```r
+## Faster method
+idx <- match(D$fruit1, names(lookup))
+D$fruitFast <- lookup[idx]
+D
+```
+
+```
+##   fruit1 fruit2 fruitSlow fruitFast
+## 1      4      1    Durian    Durian
+## 2      1      1     Apple     Apple
+## 3      2      9    Banana    Banana
+## 4      3      9    Cherry    Cherry
+## 5      5      9      <NA>      <NA>
+## 6      6      9      <NA>      <NA>
+## 7      7      9      <NA>      <NA>
+## 8      8      9      <NA>      <NA>
+## 9      9      2    Banana      <NA>
+```
+
+```r
+unlabeled <- is.na(D$fruitFast)
+idx <- match(D$fruit2[unlabeled], names(lookup))
+D$fruitFast[unlabeled] <- lookup[idx]
+D
+```
+
+```
+##   fruit1 fruit2 fruitSlow fruitFast
+## 1      4      1    Durian    Durian
+## 2      1      1     Apple     Apple
+## 3      2      9    Banana    Banana
+## 4      3      9    Cherry    Cherry
+## 5      5      9      <NA>      <NA>
+## 6      6      9      <NA>      <NA>
+## 7      7      9      <NA>      <NA>
+## 8      8      9      <NA>      <NA>
+## 9      9      2    Banana    Banana
+```

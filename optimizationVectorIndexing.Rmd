@@ -81,3 +81,31 @@ system.time(
                              facBetos  = facBetos [idx])]
 )                     
 ```
+
+
+## Another example
+
+```{r}
+## Lookup table
+lookup <- c("Apple", "Banana", "Cherry", "Durian")
+names(lookup) <- c(1, 2, 3, 4)
+lookup
+## Stupid dataset
+D <- data.frame(fruit1 = c(4, 1, 2, 3, 5, 6, 7, 8, 9),
+                fruit2 = c(1, 1, 9, 9, 9, 9, 9, 9, 2))
+D
+## Slower method
+D$fruitSlow <- lookup[D$fruit1]
+D
+unlabeled <- is.na(D$fruitSlow)
+D$fruitSlow[unlabeled] <- lookup[D$fruit2[unlabeled]]
+D
+## Faster method
+idx <- match(D$fruit1, names(lookup))
+D$fruitFast <- lookup[idx]
+D
+unlabeled <- is.na(D$fruitFast)
+idx <- match(D$fruit2[unlabeled], names(lookup))
+D$fruitFast[unlabeled] <- lookup[idx]
+D
+```
