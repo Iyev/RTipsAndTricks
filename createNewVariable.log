@@ -1,0 +1,159 @@
+1                                        The SAS System              11:54 Tuesday, July 1, 2014
+
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M0) 
+      Licensed to OREGON HEALTH SCIENCES UNIVERSITY - SFA T&R, Site 70081284.
+NOTE: This session is executing on the X64_7PRO  platform.
+
+
+
+NOTE: Updated analytical products:
+      
+      SAS/STAT 12.3 (maintenance)
+      SAS/ETS 12.3 (maintenance)
+      SAS/OR 12.3 (maintenance)
+      SAS/IML 12.3 (maintenance)
+      SAS/QC 12.3 (maintenance)
+
+NOTE: Additional host information:
+
+ X64_7PRO WIN 6.1.7601 Service Pack 1 Workstation
+
+NOTE: SAS initialization used:
+      real time           0.83 seconds
+      cpu time            0.14 seconds
+      
+1          /* Assign file name */
+2          filename f "H:\CHSE\ActiveProjects\Sandbox\RTipsAndTricks\fakedata.csv";
+3          
+4          /* Import dataset */
+5          data Work.FakeData;
+6              length id 8 date 8 state $20 x1 8 x2 8 x3 8;
+7              format date yymmdd10.;
+8              informat date yymmdd10.;
+9              infile f lrecl=100 firstobs=2 dlm="," missover dsd;
+10             input id date state $ x1 x2 x3;
+11         run;
+
+NOTE: The infile F is:
+      Filename=H:\CHSE\ActiveProjects\Sandbox\RTipsAndTricks\fakedata.csv,
+      RECFM=V,LRECL=100,File Size (bytes)=62077,
+      Last Modified=01Jul2014:11:54:36,
+      Create Time=01Jul2014:11:53:11
+
+NOTE: 1000 records were read from the infile F.
+      The minimum record length was 39.
+      The maximum record length was 69.
+NOTE: The data set WORK.FAKEDATA has 1000 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+      
+
+12         
+13         /* Create new variable, x4 */
+14         data Work.FakeData;
+2                                        The SAS System              11:54 Tuesday, July 1, 2014
+
+15         	set Work.FakeData;
+16         	x4 = rantbl(0, 1/5, 1/5, 1/5, 1/5, 1/5);
+17         run;
+
+NOTE: There were 1000 observations read from the data set WORK.FAKEDATA.
+NOTE: The data set WORK.FAKEDATA has 1000 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+18         
+19         /* Export dataset */
+20         proc export data=Work.FakeData outfile=f dbms=csv replace;
+21         run;
+
+22          /**********************************************************************
+23          *   PRODUCT:   SAS
+24          *   VERSION:   9.4
+25          *   CREATOR:   External File Interface
+26          *   DATE:      01JUL14
+27          *   DESC:      Generated SAS Datastep Code
+28          *   TEMPLATE SOURCE:  (None Specified.)
+29          ***********************************************************************/
+30             data _null_;
+31             %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+32             %let _EFIREC_ = 0;     /* clear export record count macro variable */
+33             file F delimiter=',' DSD DROPOVER lrecl=32767;
+34             if _n_ = 1 then        /* write column names or labels */
+35              do;
+36                put
+37                   "id"
+38                ','
+39                   "date"
+40                ','
+41                   "state"
+42                ','
+43                   "x1"
+44                ','
+45                   "x2"
+46                ','
+47                   "x3"
+48                ','
+49                   "x4"
+50                ;
+51              end;
+52            set  WORK.FAKEDATA   end=EFIEOD;
+53                format id best12. ;
+54                format date yymmdd10. ;
+55                format state $20. ;
+56                format x1 best12. ;
+57                format x2 best12. ;
+58                format x3 best12. ;
+3                                        The SAS System              11:54 Tuesday, July 1, 2014
+
+59                format x4 best12. ;
+60              do;
+61                EFIOUT + 1;
+62                put id @;
+63                put date @;
+64                put state $ @;
+65                put x1 @;
+66                put x2 @;
+67                put x3 @;
+68                put x4 ;
+69                ;
+70              end;
+71             if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro
+71       ! variable */
+72             if EFIEOD then call symputx('_EFIREC_',EFIOUT);
+73             run;
+
+NOTE: The file F is:
+      Filename=H:\CHSE\ActiveProjects\Sandbox\RTipsAndTricks\fakedata.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=01Jul2014:11:54:38,
+      Create Time=01Jul2014:11:54:38
+
+NOTE: 1001 records were written to the file F.
+      The minimum record length was 25.
+      The maximum record length was 59.
+NOTE: There were 1000 observations read from the data set WORK.FAKEDATA.
+NOTE: DATA statement used (Total process time):
+      real time           0.23 seconds
+      cpu time            0.00 seconds
+      
+
+1000 records created in F from WORK.FAKEDATA.
+  
+  
+NOTE: "F" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.53 seconds
+      cpu time            0.10 seconds
+      
+
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           1.79 seconds
+      cpu time            0.28 seconds
+      

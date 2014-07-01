@@ -7,8 +7,8 @@ For example, using `proc sql` to join multiple tables simultaneously is easier t
 The basic process for call SAS from R is
 
 1. Write data to be processed by SAS as CSV.
-2. Call an existing SAS program. **TO DO**
-3. Read data file created by the SAS program. **TO DO**
+2. Call an existing SAS program.
+3. Read data file created by the SAS program.
 
 
 ## Create a fake dataset
@@ -43,9 +43,9 @@ summary(D)
 
 Some things to note about the call to `write.csv`.
 
-* `quote=FALSE` prevents writing redundant quotation marks
-* `na="."` changes the R default `NA` to the SAS default `.` for missing values
-* `row.names=FALSE` also prevents writing redundant stuff
+* `quote=FALSE` prevents writing redundant quotation marks.
+* `na="."` changes the R default `NA` to the SAS default `.` for missing values; it will prevent an *Invalid data* note to be written to the log.
+* `row.names=FALSE` also prevents writing redundant stuff.
 
 ```{r}
 path <- getwd()
@@ -56,5 +56,77 @@ write.csv(D, f, quote=FALSE, na=".", row.names=FALSE)
 Read a few lines from the CSV file just to take a peek.
 
 ```{r}
-readLines(f, n=5)
+readLines(f, n=10)
+```
+
+
+## Call SAS
+
+Call SAS to
+
+1. Read data.
+2. Create new variable `x4`.
+
+Define a function to make a SAS command string.
+The command string writes a SAS log using the same file name as the program file, `f`.
+
+```{r}
+makeCmd <- function(f) {
+  path <- getwd()
+  sasFile <- file.path(path, paste0(f, ".sas"))
+  logFile <- file.path(path, paste0(f, ".log"))
+  sasexe <- file.path("C:", "Program Files", "SASHome2", "SASFoundation", "9.4", "sas.exe")
+  str <- paste(
+    paste0("\"", sasexe, "\""),
+    "-sysin", paste0("\"", sasFile, "\""),
+    "-log", paste0("\"", logFile, "\""),
+    "-print", paste0("\"", logFile, "\"")
+ )
+  show(str)
+  str
+}
+```
+
+Use the SAS command string in a system call.
+The SAS program file is `createNewVariable.sas`.
+The program file was not automatically generated.
+The SAS log file is `createNewVariable.log`.
+**If there were any errors, then there will be an error code returned here.**
+Check the SAS log for details on any errors.
+
+```{r}
+cmd <- makeCmd("createNewVariable")
+system(cmd, invisible = FALSE)
+```
+
+
+## Read data file created by the SAS program
+
+```{r}
+path <- getwd()
+f <- file.path(path, "fakedata.csv")
+D <- read.csv(f)
+```
+
+Need to change the class of the date variable.
+It is read in by `read.csv` as a character class.
+
+```{r}
+D$date <- as.Date(D$date)
+```
+
+
+Examine the dataset.
+
+```{r}
+summary(D)
+```
+
+
+## Appendix: the SAS program `createNewVariable.sas`
+
+```{r}
+path <- getwd()
+sasFile <- file.path(path, "createNewVariable.sas")
+readLines(sasFile)
 ```
