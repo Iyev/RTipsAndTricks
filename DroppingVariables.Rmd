@@ -1,0 +1,57 @@
+---
+output:
+  html_document:
+    keep_md: true
+---
+
+# Subset vs NULL
+
+Which is faster to drop variables from a data table?
+
+* `subset`
+* NULL assignment
+
+Create fake dataset of 10 random normal variables.
+
+```{r}
+size <- 5E7
+D <- data.frame(x0 = rnorm(size),
+                x1 = rnorm(size),
+                x2 = rnorm(size),
+                x3 = rnorm(size),
+                x4 = rnorm(size),
+                x5 = rnorm(size),
+                x6 = rnorm(size),
+                x7 = rnorm(size),
+                x8 = rnorm(size),
+                x9 = rnorm(size))
+require(data.table)
+D <- data.table(D)
+D1 <- D
+D2 <- D
+rm(D)
+identical(D1, D2)
+```
+
+Drop the last 3 variables.
+
+```{r}
+t1 <- system.time(D1 <- subset(D1, select = -c(x7, x8, x9)))
+t2 <- system.time(D2 <- D2[, `:=` (x7 = NULL, x8 = NULL, x9 = NULL)])
+```
+
+Check results to make sure they match.
+
+```{r}
+str(D1)
+str(D2)
+identical(D1, D2)
+```
+
+Is `subset` faster?
+
+```{r}
+t1
+t2
+message(sprintf("Is subset faster? %s", t1[3] < t2[3]))
+```
