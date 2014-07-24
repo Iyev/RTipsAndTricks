@@ -9,6 +9,8 @@ We need to determine if the end of one claim is *close* to the start of another 
 Use social network analysis tools.
 
 
+## Dataset
+
 Grab a dataset to play around with.
 There's no crucial reason to use `data.table`.
 
@@ -52,6 +54,22 @@ This is for error-checking later.
 nrow0 <- nrow(sample)
 ```
 
+Look at an example of claims from one person.
+The `exampleID` value is masked.
+We'll use the same person in the examples throughout.
+
+```{r, echo=FALSE}
+exampleID <- 3319483
+```
+
+```{r}
+varlist <- c("claimID", "dateFirstSvc", "dateLastSvc")
+sample[sample$memberID==exampleID, varlist]
+```
+
+
+## Pair up claims
+
 Do a cartesian merge.
 I.e., create all possible pairwise combinations of claims.
 Column names from the first claim in the pair are suffixed with `.x`.
@@ -82,20 +100,39 @@ Create a logical column indicating whether to bundle the pairs.
 pairs$isBundled <- pairs$daysAfter <= 30
 ```
 
-Look at a few examples.
-**Only do this in an interactive session.**
+Look at an example.
+The `exampleID` value is masked.
 
-```{r, echo=FALSE, eval=FALSE}
-pairs[pairs$memberID==344192, ]
-pairs[pairs$memberID==1931772, ]
-pairs[pairs$memberID==4599276, ]
+```{r, echo=FALSE}
+exampleID <- 3319483
 ```
+
+```{r}
+varlist <- c("claimID.x", "dateFirstSvc.x", "dateLastSvc.x", "claimID.y", "dateFirstSvc.y", "dateLastSvc.y", "daysAfter", "isBundled")
+example <- pairs[pairs$memberID==exampleID, varlist]
+example
+```
+
+What we see is a table of pairs of claims.
+E.g., claim 97 is paired with 98, which started on the same day as 97 ended, so they're **bundled**.
+E.g., claim 97 is paired with 100, which started 94 days after 97 ended, so they're **not bundled**.
+So, thinking this through, there are 2 episodes
+
+* Claims 97, 98, 99
+* Claims 100, 101, 102, 103, 104
+
+**The challenge is to tag each of these bundles with a unique episode identifier.**
+I.e., to go from a data structure of pairs to the original data structure of claims.
+
+
+## Episode bundling
 
 Use some social network analysis tools.
 Generate a network graph of the bundled claims.
 The node label is the claimID.
 
 ```{r}
+# install.packages("igraph")
 require(igraph)
 G <- graph.data.frame(pairs[pairs$isBundled == TRUE, c("claimID.x", "claimID.y")], directed=FALSE)
 ```
@@ -144,11 +181,10 @@ Make sure we ended up with the same number of rows as we started with.
 message(sprintf("Is the number of rows the same as when we started? %s", identical(nrow0, nrow(sample))))
 ```
 
-Look at a few examples.
-**Only do this in an interactive session.**
+Look at an example.
+The `exampleID` value is masked.
 
-```{r, echo=FALSE, eval=FALSE}
-sample[sample$memberID==344192, ]
-sample[sample$memberID==1931772, ]
-sample[sample$memberID==4599276, ]
+```{r}
+varlist <- c("episodeID", "claimID", "dateFirstSvc", "dateLastSvc")
+sample[sample$memberID==exampleID, varlist]
 ```
