@@ -1,0 +1,83 @@
+---
+title: "Read Stata 13 data file"
+author: "Benjamin Chan (chanb@ohsu.edu)"
+date: "Thursday, September 18, 2014"
+output:
+  html_document:
+    keep_md: yes
+---
+
+Define the function `readStata13`.
+
+```{r}
+readStata13 <- function (fIn) {
+  if (Sys.info()["nodename"] == "CHSE") {
+    top <- file.path("E:", "Share")
+    } else {
+      top <- file.path("E:")
+      }
+  pathApp <- file.path(top, "Applications")
+  # Convert from Stata version 13 to version 12
+  # Can't use StatTransfer 11; need to convert using Stata 13
+  # Create a temporary do file to do this
+  tempFileName <- tempfile()
+  fOut <- paste0(tempFileName, ".dta")
+  fDo <- paste0(tempFileName, ".do")
+  fLog <- paste0(tempFileName, ".log")
+  lines <- newline(NULL, "capture log close")
+  lines <- newline(lines, paste("log using", fLog, ", replace"))
+  lines <- newline(lines, paste("use", paste0("\"", fIn, "\""), ", clear"))
+  lines <- newline(lines, paste("saveold", paste0("\"", fOut, "\""), ", replace"))
+  lines <- newline(lines, "")
+  cat(lines, file=fDo)
+  # Run Stata in batch mode
+  cmd <- paste(file.path(pathApp, "Stata13", "StataMP-64.exe"), "/e do", paste0("\"", fDo, "\""))
+  system(cmd, invisible=FALSE)
+  # Check the log
+  readLines(fLog)
+  # Then use the foreign package to read the converted version 12 dta file
+  require(foreign)
+  D <- read.dta(fOut)
+  D
+}
+```
+
+Define some helper functions.
+
+```{r}
+newline <- function (lines, lineToAdd) {
+  lines <- paste(lines, lineToAdd, sep="\n")
+  lines
+}
+```
+
+Set file paths.
+
+```{r}
+if (Sys.info()["nodename"] == "CHSE") {
+  top <- file.path("E:", "Share")
+} else {
+  top <- file.path("E:")
+}
+pathStata <- file.path(top, "Other", "Some code by John", "CCO analyses", "3 Final Data Sets")
+```
+
+Read this Stata 13 file.
+
+```{r}
+f <- file.path(pathStata, "quarterly_mcaid_commercial.dta")
+```
+
+Try reading the Stata 13 file **without converting** to Stata 12.
+
+```{r, error=TRUE}
+require(foreign)
+D <- read.dta(f)
+```
+
+Try reading the Stata 13 file **after converting** to Stata 12.
+
+```{r}
+D <- readStata13(f)
+str(D)
+```
