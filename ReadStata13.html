@@ -83,7 +83,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
   cmd &lt;- paste(file.path(pathApp, &quot;Stata13&quot;, &quot;StataMP-64.exe&quot;), &quot;/e do&quot;, paste0(&quot;\&quot;&quot;, fDo, &quot;\&quot;&quot;))
   system(cmd, invisible=FALSE)
   # Check the log
-  readLines(fLog)
+  show(readLines(fLog))
   # Then use the foreign package to read the converted version 12 dta file
   require(foreign)
   D &lt;- read.dta(fOut)
@@ -109,8 +109,27 @@ pathStata &lt;- file.path(top, &quot;Other&quot;, &quot;Some code by John&quot;,
 <pre class="r"><code>D &lt;- read.dta(f)</code></pre>
 <pre><code>## Error: not a Stata version 5-12 .dta file</code></pre>
 <p>Try reading the Stata 13 file <strong>after converting</strong> to Stata 12.</p>
-<pre class="r"><code>D &lt;- readStata13(f)
-str(D)</code></pre>
+<pre class="r"><code>D &lt;- readStata13(f)</code></pre>
+<pre><code>##  [1] &quot;--------------------------------------------------------------------------------&quot;          
+##  [2] &quot;      name:  &lt;unnamed&gt;&quot;                                                                    
+##  [3] &quot;       log:  C:\\Users\\chanb\\AppData\\Local\\Temp\\3\\RtmpED8A0p\\file10e4123a19d4.log&quot;  
+##  [4] &quot;  log type:  text&quot;                                                                         
+##  [5] &quot; opened on:  18 Sep 2014, 09:56:09&quot;                                                        
+##  [6] &quot;&quot;                                                                                          
+##  [7] &quot;. use \&quot;E:/Share/Other/Some code by John/CCO analyses/3 Final Data Sets/quarterly&quot;         
+##  [8] &quot;&gt; _mcaid_commercial.dta\&quot; , clear&quot;                                                         
+##  [9] &quot;(Written by R.              )&quot;                                                             
+## [10] &quot;&quot;                                                                                          
+## [11] &quot;. saveold \&quot;C:\\Users\\chanb\\AppData\\Local\\Temp\\3\\RtmpED8A0p\\file10e4123a19d4.dta\&quot; &quot;
+## [12] &quot;&gt; , replace&quot;                                                                               
+## [13] &quot;(note: file C:\\Users\\chanb\\AppData\\Local\\Temp\\3\\RtmpED8A0p\\file10e4123a19d4.dta &quot;  
+## [14] &quot;&gt; not found)&quot;                                                                              
+## [15] &quot;file C:\\Users\\chanb\\AppData\\Local\\Temp\\3\\RtmpED8A0p\\file10e4123a19d4.dta saved&quot;    
+## [16] &quot;&quot;                                                                                          
+## [17] &quot;. &quot;                                                                                        
+## [18] &quot;end of do-file&quot;</code></pre>
+<p>Check the returned data frame.</p>
+<pre class="r"><code>str(D)</code></pre>
 <pre><code>## 'data.frame':    20 obs. of  82 variables:
 ##  $ yearEnding                  : int  17987 18078 18170 18262 18352 18443 18535 18627 18717 18808 ...
 ##  $ acuteTotalRawComm           : num  NA NA NA NA 173 ...
@@ -195,7 +214,7 @@ str(D)</code></pre>
 ##  $ quarter                     : num  1 2 3 4 5 6 7 8 9 10 ...
 ##  $ predictedAcuteMedicaid      : num  310 320 329 339 349 ...
 ##  - attr(*, &quot;datalabel&quot;)= chr &quot;Written by R.              &quot;
-##  - attr(*, &quot;time.stamp&quot;)= chr &quot;18 Sep 2014 09:41&quot;
+##  - attr(*, &quot;time.stamp&quot;)= chr &quot;18 Sep 2014 09:56&quot;
 ##  - attr(*, &quot;formats&quot;)= chr  &quot;%td&quot; &quot;%9.0g&quot; &quot;%9.0g&quot; &quot;%9.0g&quot; ...
 ##  - attr(*, &quot;types&quot;)= int  252 255 255 255 255 255 255 255 255 255 ...
 ##  - attr(*, &quot;val.labels&quot;)= chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...

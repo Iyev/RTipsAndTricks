@@ -30,7 +30,7 @@ readStata13 <- function (fIn) {
   cmd <- paste(file.path(pathApp, "Stata13", "StataMP-64.exe"), "/e do", paste0("\"", fDo, "\""))
   system(cmd, invisible=FALSE)
   # Check the log
-  readLines(fLog)
+  show(readLines(fLog))
   # Then use the foreign package to read the converted version 12 dta file
   require(foreign)
   D <- read.dta(fOut)
@@ -91,6 +91,33 @@ Try reading the Stata 13 file **after converting** to Stata 12.
 
 ```r
 D <- readStata13(f)
+```
+
+```
+##  [1] "--------------------------------------------------------------------------------"          
+##  [2] "      name:  <unnamed>"                                                                    
+##  [3] "       log:  C:\\Users\\chanb\\AppData\\Local\\Temp\\3\\RtmpED8A0p\\file10e4123a19d4.log"  
+##  [4] "  log type:  text"                                                                         
+##  [5] " opened on:  18 Sep 2014, 09:56:09"                                                        
+##  [6] ""                                                                                          
+##  [7] ". use \"E:/Share/Other/Some code by John/CCO analyses/3 Final Data Sets/quarterly"         
+##  [8] "> _mcaid_commercial.dta\" , clear"                                                         
+##  [9] "(Written by R.              )"                                                             
+## [10] ""                                                                                          
+## [11] ". saveold \"C:\\Users\\chanb\\AppData\\Local\\Temp\\3\\RtmpED8A0p\\file10e4123a19d4.dta\" "
+## [12] "> , replace"                                                                               
+## [13] "(note: file C:\\Users\\chanb\\AppData\\Local\\Temp\\3\\RtmpED8A0p\\file10e4123a19d4.dta "  
+## [14] "> not found)"                                                                              
+## [15] "file C:\\Users\\chanb\\AppData\\Local\\Temp\\3\\RtmpED8A0p\\file10e4123a19d4.dta saved"    
+## [16] ""                                                                                          
+## [17] ". "                                                                                        
+## [18] "end of do-file"
+```
+
+Check the returned data frame.
+
+
+```r
 str(D)
 ```
 
@@ -179,7 +206,7 @@ str(D)
 ##  $ quarter                     : num  1 2 3 4 5 6 7 8 9 10 ...
 ##  $ predictedAcuteMedicaid      : num  310 320 329 339 349 ...
 ##  - attr(*, "datalabel")= chr "Written by R.              "
-##  - attr(*, "time.stamp")= chr "18 Sep 2014 09:41"
+##  - attr(*, "time.stamp")= chr "18 Sep 2014 09:56"
 ##  - attr(*, "formats")= chr  "%td" "%9.0g" "%9.0g" "%9.0g" ...
 ##  - attr(*, "types")= int  252 255 255 255 255 255 255 255 255 255 ...
 ##  - attr(*, "val.labels")= chr  "" "" "" "" ...

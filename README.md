@@ -13,7 +13,7 @@
 * *Round up* a date object to the latest quarter [`RoundUpToQuarter.md`](https://github.com/benjamin-chan/RTipsAndTricks/blob/master/RoundUpToQuarter.md)
 * Dropping columns from a data table [`DroppingVariables.md`](https://github.com/benjamin-chan/RTipsAndTricks/blob/master/DroppingVariables.md)
 * Bundling claims into episodes [`bundleClaims.md`](https://github.com/benjamin-chan/RTipsAndTricks/blob/master/bundleClaims.md)
-* Read Stata 13 data file [`ReadStata13.Rmd`](https://github.com/benjamin-chan/RTipsAndTricks/blob/master/ReadStata13.md)
+* Read Stata 13 data file [`ReadStata13.md`](https://github.com/benjamin-chan/RTipsAndTricks/blob/master/ReadStata13.md)
 
 
 **For contributors**

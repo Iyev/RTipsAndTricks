@@ -34,7 +34,7 @@ readStata13 <- function (fIn) {
   cmd <- paste(file.path(pathApp, "Stata13", "StataMP-64.exe"), "/e do", paste0("\"", fDo, "\""))
   system(cmd, invisible=FALSE)
   # Check the log
-  readLines(fLog)
+  show(readLines(fLog))
   # Then use the foreign package to read the converted version 12 dta file
   require(foreign)
   D <- read.dta(fOut)
@@ -79,5 +79,10 @@ Try reading the Stata 13 file **after converting** to Stata 12.
 
 ```{r}
 D <- readStata13(f)
+```
+
+Check the returned data frame.
+
+```{r}
 str(D)
 ```
