@@ -1,4 +1,4 @@
-path <- file.path("H:", "CHSE", "ActiveProjects", "Sandbox", "RTipsAndTricks")
+path <- file.path("H:", "CHSE", "ActiveProjects", "Sandbox", "RTipsAndTricks")  ## <--- Change this
 filename <- "bundleClaims"  ## <--- Change this
 f1 <- file.path(path, paste0(filename, ".Rmd"))
 f2 <- file.path(path, paste0(filename, ".md"))
