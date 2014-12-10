@@ -1,7 +1,5 @@
-path <- file.path("H:", "CHSE", "ActiveProjects", "Sandbox", "RTipsAndTricks")  ## <--- Change this
-filename <- "bundleClaims"  ## <--- Change this
-f1 <- file.path(path, paste0(filename, ".Rmd"))
-f2 <- file.path(path, paste0(filename, ".md"))
+path <- "C:\\Users\\chanb\\Documents\\GitHub Repositories\\RTipsAndTricks"  ## <--- Change this
+filename <- "displayPHIAlternatives"  ## <--- Change this
+f <- paste(path, paste0(filename, ".Rmd"), sep="\\")
 require(knitr)
-setwd(path)
-knit(f1, f2)
+render(f, output_format="html_document")

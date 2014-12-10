@@ -75,8 +75,6 @@ url &lt;- &quot;https://raw.githubusercontent.com/benjamin-chan/OpenPayments/mas
 source(url)
 url &lt;- &quot;https://raw.githubusercontent.com/benjamin-chan/OpenPayments/master/getData.r&quot;
 source(url)</code></pre>
-<pre><code>## Warning in download.file(url, f, mode = &quot;wb&quot;): downloaded length 151974726
-## != reported length 151974726</code></pre>
 <pre><code>## ï»¿Filename: README.txt
 ## Version: 1.0
 ## Date: September 2014
@@ -102,41 +100,25 @@ source(url)</code></pre>
 ## This file contains the data set for Ownership and Investment Interest Information for the 2013 program year. Ownership and Investment Interest Information is defined as information about the value of ownership or investment interest in an applicable manufacturer or applicable group purchasing organization.  
 ## 
 ## File #4 - OPPR_SPLMTL_PH_PRFL_09302014.csv:
-## A supplementary file that displays all of the physicians indicated as recipients of payments, other transfers of value, or ownership and investment interest in records reported in Open Payments. Each record includes the physicianâs demographic information, specialties, and license information, as well as a unique identification number (Physician Profile ID) that can be used to search for a specific physician in the general, research, and physician ownership files.</code></pre>
-<pre><code>## Loading required package: data.table</code></pre>
-<pre><code>## 
+## A supplementary file that displays all of the physicians indicated as recipients of payments, other transfers of value, or ownership and investment interest in records reported in Open Payments. Each record includes the physicianâ€™s demographic information, specialties, and license information, as well as a unique identification number (Physician Profile ID) that can be used to search for a specific physician in the general, research, and physician ownership files. 
+## 
 Read 0.0% of 2626674 rows
-Read 5.7% of 2626674 rows
-Read 6.5% of 2626674 rows
-Read 8.4% of 2626674 rows
-Read 10.3% of 2626674 rows
-Read 12.6% of 2626674 rows
-Read 14.5% of 2626674 rows
-Read 16.4% of 2626674 rows
-Read 18.7% of 2626674 rows
-Read 21.3% of 2626674 rows
-Read 24.0% of 2626674 rows
-Read 26.6% of 2626674 rows
-Read 30.1% of 2626674 rows
-Read 33.1% of 2626674 rows
+Read 6.1% of 2626674 rows
+Read 12.2% of 2626674 rows
+Read 18.3% of 2626674 rows
+Read 24.4% of 2626674 rows
+Read 30.5% of 2626674 rows
 Read 36.5% of 2626674 rows
-Read 40.0% of 2626674 rows
-Read 43.8% of 2626674 rows
-Read 48.4% of 2626674 rows
-Read 53.3% of 2626674 rows
-Read 57.9% of 2626674 rows
-Read 62.4% of 2626674 rows
-Read 62.8% of 2626674 rows
-Read 68.1% of 2626674 rows
-Read 73.1% of 2626674 rows
-Read 78.8% of 2626674 rows
-Read 84.9% of 2626674 rows
-Read 85.3% of 2626674 rows
-Read 91.8% of 2626674 rows
-Read 92.1% of 2626674 rows
-Read 98.2% of 2626674 rows
-Read 99.0% of 2626674 rows
-Read 2626674 rows and 63 (of 63) columns from 1.293 GB file in 00:01:03</code></pre>
+Read 43.0% of 2626674 rows
+Read 49.1% of 2626674 rows
+Read 55.2% of 2626674 rows
+Read 61.7% of 2626674 rows
+Read 67.8% of 2626674 rows
+Read 74.2% of 2626674 rows
+Read 80.7% of 2626674 rows
+Read 87.2% of 2626674 rows
+Read 93.7% of 2626674 rows
+Read 2626674 rows and 63 (of 63) columns from 1.293 GB file in 00:00:21</code></pre>
 <pre class="r"><code>require(data.table)</code></pre>
 <p>For simplicity, operate on a subset of columns in data frame D.</p>
 <pre class="r"><code>varToKeep &lt;- c(&quot;General_Transaction_ID&quot;, &quot;Physician_Profile_ID&quot;, &quot;Physician_Last_Name&quot;, &quot;Physician_Specialty&quot;)
@@ -221,11 +203,11 @@ D &lt;- D[, varToKeep, with=FALSE]</code></pre>
 <p>Write <code>head(D)</code> to an output file in the protected folder.</p>
 <pre class="r"><code>f &lt;- paste0(&quot;exampleOutputHead_&quot;, Sys.Date())
 outputTo(head(D), f, pathProtected)</code></pre>
-<pre><code>## See output file C:\Users\chanb\AppData\Local\Temp\Rtmpw9dZay\exampleOutputHead_2014-12-10</code></pre>
+<pre><code>## See output file C:\Users\chanb\AppData\Local\Temp\RtmpQn9JHx\exampleOutputHead_2014-12-10</code></pre>
 <p>Write <code>str(D)</code> to an output file in the protected folder.</p>
 <pre class="r"><code>f &lt;- paste0(&quot;exampleOutputStr_&quot;, Sys.Date())
 outputTo(str(D), f, pathProtected)</code></pre>
-<pre><code>## See output file C:\Users\chanb\AppData\Local\Temp\Rtmpw9dZay\exampleOutputStr_2014-12-10</code></pre>
+<pre><code>## See output file C:\Users\chanb\AppData\Local\Temp\RtmpQn9JHx\exampleOutputStr_2014-12-10</code></pre>
 </div>
 
 
