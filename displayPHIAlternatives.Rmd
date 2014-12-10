@@ -1,0 +1,119 @@
+---
+title: "Alternatives to displaying protected health information"
+author: "Benjamin Chan (chanb@ohsu.edu)"
+date: "Wednesday, December 10, 2014"
+output: html_document
+---
+
+# Context
+
+Often, it is useful to document the structure of datasets in output so the reader can follow the flow of the code.
+However, the datasets we use contain [protected health information (PHI)](http://www.hipaa.com/2009/09/hipaa-protected-health-information-what-does-phi-include/).
+To allow for the ability to share code and output to external entities while maintaining HIPAA compliance, the following methods are proposed.
+
+1. Hashing the PHI
+2. Writing PHI to external datasets
+
+
+# Read example dataset
+
+**This dataset does not contain actual PHI.**
+
+Source scripts to read in the CMS [Open Payments](http://www.cms.gov/OpenPayments) data.
+Scripts are from the following [GitHub repository](https://github.com/benjamin-chan/OpenPayments).
+
+```{r}
+setInternet2()
+url <- "https://raw.githubusercontent.com/benjamin-chan/OpenPayments/master/library.r"
+source(url)
+url <- "https://raw.githubusercontent.com/benjamin-chan/OpenPayments/master/getData.r"
+source(url)
+require(data.table)
+```
+
+For simplicity, operate on a subset of columns in data frame D.
+
+```{r}
+varToKeep <- c("General_Transaction_ID", "Physician_Profile_ID", "Physician_Last_Name", "Physician_Specialty")
+D <- D[, varToKeep, with=FALSE]
+```
+
+
+# Example of non-compliance
+
+Pretend all columns except `Physician_Specialty` are PHI.
+
+The following output would **not** be HIPAA-compliant.
+
+```{r}
+head(D)
+str(D)
+```
+
+
+# Example of hashing PHI
+
+**Need to find a good hash/anonymizer/scrambler function**
+For now, mask half of the characters in the string.
+
+```{r}
+mask <- function (s) {
+  len <- nchar(s)
+  s <- paste0("***", substr(s, len / 2, len))
+  s
+}
+```
+
+"Anonymize" the PHI columns.
+
+```{r}
+D <- D[,
+       `:=` (General_Transaction_ID = mask(General_Transaction_ID),
+             Physician_Profile_ID = mask(Physician_Profile_ID),
+             Physician_Last_Name = mask(Physician_Last_Name))]
+```
+
+Show the masked datasets.
+With an appropriate hash/anonymizer/scrambler function, the following should be HIPAA-compliant.
+
+```{r}
+head(D)
+str(D)
+```
+
+
+# Example of writing to an external dataset
+
+Define a output function.
+
+```{r}
+outputTo <- function (obj, f, path) {
+  outf <- paste(path, f, sep="\\")
+  message(sprintf("See output file %s", outf))
+  sink(outf)
+  show(obj)
+  sink()
+}
+```
+
+Set folder/directory to output data to.
+**This folder should be accessible only to individuals covered by the data use agreement (DUA) to use the data.**
+For illustration, a temp folder is used, but the code is generalizable.
+
+```{r}
+pathProtected <- tempdir()  ## Change this to another protected folder
+```
+
+Write `head(D)` to an output file in the protected folder.
+
+```{r}
+f <- paste0("exampleOutputHead_", Sys.Date())
+outputTo(head(D), f, pathProtected)
+```
+
+Write `str(D)` to an output file in the protected folder.
+
+```{r}
+f <- paste0("exampleOutputStr_", Sys.Date())
+outputTo(str(D), f, pathProtected)
+```
